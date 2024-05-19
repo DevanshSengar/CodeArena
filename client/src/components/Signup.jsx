@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { useState } from "react";
 import "../App.css";
 import Axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -28,8 +27,11 @@ const Signup = () => {
       });
   };
   return (
-    <div className="sign-up-container">
-      <form className="sign-up-form" onSubmit={handleSubmit}>
+    <div className="flex justify-center items-center h-screen">
+      <form
+        className="w-72 p-5 border border-gray-300 rounded-lg shadow"
+        onSubmit={handleSubmit}
+      >
         <h2>Sign Up</h2>
         <label htmlFor="username">Username:</label>
         <input

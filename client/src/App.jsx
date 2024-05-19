@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Signup from "./Components/Signup";
-import Login from "./Components/Login";
-import Home from "./Components/Home";
-import ForgotPassword from "./Components/ForgotPassword";
-import ResetPassword from "./Components/ResetPassword";
-import Dashboard from "./Components/Dashboard";
+import Signup from "./components/Signup.jsx";
+import Login from "./components/Login.jsx";
+import Home from "./components/Home.jsx";
+// import ForgotPassword from "./Components/ForgotPassword";
+// import ResetPassword from "./Components/ResetPassword";
+// import Dashboard from "./Components/Dashboard";
 
 function App() {
   return (
