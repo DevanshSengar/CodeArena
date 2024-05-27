@@ -2,9 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Signup from "./components/Signup.jsx";
 import Login from "./components/Login.jsx";
 import Home from "./components/Home.jsx";
-// import ForgotPassword from "./Components/ForgotPassword";
-// import ResetPassword from "./Components/ResetPassword";
-// import Dashboard from "./Components/Dashboard";
+import ForgotPassword from "./components/ForgotPassword.jsx";
+import ResetPassword from "./components/ResetPassword.jsx";
+// import Dashboard from "./components/Dashboard";
 
 function App() {
   return (
@@ -13,8 +13,8 @@ function App() {
         <Route path="/" element={<Home />}></Route>
         <Route path="/signup" element={<Signup />}></Route>
         <Route path="/login" element={<Login />}></Route>
-        {/* <Route path = "/forgotPassword" element={<ForgotPassword />}></Route> */}
-        {/* <Route path = "/resetPassword/:token" element={<ResetPassword />}></Route> */}
+        <Route path="/forgotPassword" element={<ForgotPassword />}></Route>
+        <Route path="/resetPassword/:token" element={<ResetPassword />}></Route>
         {/* <Route path="/dashboard" element={<Dashboard />}></Route> */}
       </Routes>
     </BrowserRouter>
