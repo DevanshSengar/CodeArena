@@ -8,6 +8,10 @@ const TestcaseSchema = new mongoose.Schema({
   },
   testCase: [
     {
+      testID: {
+        type: String,
+        required: [true, "Please enter id"],
+      },
       input: {
         type: String,
         required: [true, "Please enter input"],

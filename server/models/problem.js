@@ -17,7 +17,10 @@ const ProblemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  difficulty: String,
+  difficulty: {
+    type: String,
+    required: true,
+  },
 });
 
 const Problem = mongoose.model("Problem", ProblemSchema);

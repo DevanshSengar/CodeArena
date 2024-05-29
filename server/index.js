@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { userRouter } from "./routes/userRoutes.js";
 import { problemRouter } from "./routes/problemRoutes.js";
+import { testcaseRouter } from "./routes/testcaseRoutes.js";
 
 DBconnection();
 
@@ -20,10 +21,11 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
 app.use("/auth", userRouter);
-app.use("/problem", problemRouter);
+app.use("/api/problems", problemRouter);
+app.use("/api/testcases", testcaseRouter);
 // app.use("/submission", submissionRouter);
-// app.use("/testcase", testcaseRouter);
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;

@@ -1,30 +1,21 @@
 import Problem from "../models/problem.js";
+import asyncWrapper from "../utils/asyncWrapper.js";
 
 // Controller methods for handling problem-related operations
-export const getAllProblems = async (req, res) => {
-  try {
-    const problems = await Problem.find();
-    console.log("Problems sent!");
-    console.log(problems);
-    res.json(problems);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+const getAllProblems = async (req, res) => {
+  const problems = await Problem.find();
+  return res.json(problems);
 };
 
-export const getProblemById = async (req, res) => {
-  try {
-    const problem = await Problem.findById(req.params.id);
-    if (!problem) {
-      return res.status(404).json({ message: "Problem not found" });
-    }
-    res.json(problem);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+const getProblemById = async (req, res) => {
+  const problem = await Problem.findById(req.params.id);
+  if (!problem) {
+    return res.status(404).json({ message: "Problem not found" });
   }
+  return res.json(problem);
 };
 
-export const createProblem = async (req, res) => {
+const createProblem = async (req, res) => {
   const problem = new Problem({
     title: req.body.title,
     description: req.body.description,
@@ -33,39 +24,34 @@ export const createProblem = async (req, res) => {
     difficulty: req.body.difficulty,
   });
 
-  try {
-    const newProblem = await problem.save();
-    console.log(newProblem);
-    res.status(201).json(newProblem);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+  const newProblem = await problem.save();
+  return res.status(201).json(newProblem);
 };
 
-export const updateProblem = async (req, res) => {
-  try {
-    const updatedProblem = await Problem.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    if (!updatedProblem) {
-      return res.status(404).json({ message: "Problem not found" });
-    }
-    res.json(updatedProblem);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+const updateProblem = async (req, res) => {
+  const updatedProblem = await Problem.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
+  if (!updatedProblem) {
+    return res.status(404).json({ message: "Problem not found" });
   }
+  return res.json(updatedProblem);
 };
 
-export const deleteProblem = async (req, res) => {
-  try {
-    const deletedProblem = await Problem.findByIdAndDelete(req.params.id);
-    if (!deletedProblem) {
-      return res.status(404).json({ message: "Problem not found" });
-    }
-    res.json({ message: "Problem deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+const deleteProblem = async (req, res) => {
+  const deletedProblem = await Problem.findByIdAndDelete(req.params.id);
+  if (!deletedProblem) {
+    return res.status(404).json({ message: "Problem not found" });
   }
+  return res.json({ message: "Problem deleted successfully" });
+};
+
+export default {
+  getAllProblems: asyncWrapper(getAllProblems),
+  getProblemById: asyncWrapper(getProblemById),
+  createProblem: asyncWrapper(createProblem),
+  updateProblem: asyncWrapper(updateProblem),
+  deleteProblem: asyncWrapper(deleteProblem),
 };
