@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "../App.css";
 import Axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -17,8 +16,9 @@ const Signup = () => {
       email,
       password,
     })
-      .then((response) => {
-        if (response.data.status) {
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.success) {
           navigate("/login");
         }
       })
@@ -26,38 +26,58 @@ const Signup = () => {
         console.log(err);
       });
   };
+
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
-        className="w-72 p-5 border border-gray-300 rounded-lg shadow"
+        className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
         onSubmit={handleSubmit}
       >
-        <h2>Sign Up</h2>
-        <label htmlFor="username">Username:</label>
+        <h2 className="text-2xl font-bold mb-2 text-center">Sign Up</h2>
+        <label className="block text-gray-700 mb-2" htmlFor="username">
+          Username:
+        </label>
         <input
+          className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
           type="text"
+          id="username"
           placeholder="Username"
           onChange={(e) => setUsername(e.target.value)}
         />
 
-        <label htmlFor="email">Email:</label>
+        <label className="block text-gray-700 mb-2" htmlFor="email">
+          Email:
+        </label>
         <input
+          className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
           type="email"
-          autoComplete="off"
+          id="email"
           placeholder="Email"
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <label htmlFor="password">Password:</label>
+        <label className="block text-gray-700 mb-2" htmlFor="password">
+          Password:
+        </label>
         <input
+          className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
           type="password"
+          id="password"
           placeholder="******"
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button type="submit">Sign Up</button>
-        <p>
-          Have an Account? <Link to="/login">Login</Link>
+        <button
+          className="w-full bg-black text-white p-3 rounded-lg font-semibold hover:bg-gray-700"
+          type="submit"
+        >
+          Sign Up
+        </button>
+        <p className="text-center mt-4">
+          Have an Account?{" "}
+          <Link className="text-blue-600 hover:underline" to="/login">
+            Login
+          </Link>
         </p>
       </form>
     </div>

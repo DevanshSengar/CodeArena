@@ -52,11 +52,9 @@ const deleteTestCaseById = async (req, res) => {
   );
 
   if (!testCase) {
-    return res
-      .status(404)
-      .json({
-        message: "Test case not found for the given problem ID and test ID",
-      });
+    return res.status(404).json({
+      message: "Test case not found for the given problem ID and test ID",
+    });
   }
 
   res.status(200).json({ message: "Test case deleted successfully" });

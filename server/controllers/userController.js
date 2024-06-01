@@ -2,83 +2,130 @@ import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import asyncWrapper from "../utils/asyncWrapper.js";
 // import nodemailer from "nodemailer";
 
 dotenv.config();
 
-export const signup = async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-    if (!username || !email || !password) {
-      return res.status(400).send("Please enter all the credentials");
-    }
-
-    const usere = await User.findOne({ email });
-    const usern = await User.findOne({ username });
-    if (usere || usern) {
-      return res.json({ message: "User already exists!" });
-    }
-
-    const hashpassword = await bcrypt.hash(password, 11);
-    const newUser = new User({
-      username,
-      email,
-      password: hashpassword,
-    });
-    await newUser.save();
-
-    return res.status(200).json({
-      success: true,
-      message: "User registed successfully.",
-      newUser,
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Something went wrong!" });
-  }
-};
-
-export const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).send("Please enter all the credentials");
-    }
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.json({ message: "User is not registered!" });
-    }
-
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-      return res.json({ message: "Invalid credentials!" });
-    }
-
-    const token = jwt.sign(
-      { id: user._id, username: user.username, email },
-      process.env.KEY,
-      {
-        expiresIn: "6h",
-      }
-    );
-    user.token = token;
-    user.password = undefined;
-
-    const options = {
-      httpOnly: true, // Prevents JavaScript from accessing the cookie
-      maxAge: 24 * 60 * 60 * 1000, // Cookie expiration in milliseconds (1 day)
-    };
-
+// Signup Route
+export const signup = asyncWrapper(async (req, res) => {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
     return res
-      .status(200)
-      .cookie("token", token, options)
-      .json({ success: true, message: "Login successful.", token });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Something went wrong!" });
+      .status(400)
+      .json({ success: false, message: "Please enter all the credentials" });
   }
-};
+
+  const usere = await User.findOne({ email });
+  const usern = await User.findOne({ username });
+  if (usere || usern) {
+    return res
+      .status(400)
+      .json({ success: false, message: "User already exists!" });
+  }
+
+  const hashpassword = await bcrypt.hash(password, 11);
+  const newUser = new User({ username, email, password: hashpassword });
+  await newUser.save();
+
+  return res
+    .status(200)
+    .json({ success: true, message: "User registered successfully.", newUser });
+});
+
+// Login Route
+export const login = asyncWrapper(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Please enter all the credentials" });
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res
+      .status(404)
+      .json({ success: false, message: "User is not registered!" });
+  }
+
+  const validPassword = await bcrypt.compare(password, user.password);
+  if (!validPassword) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Invalid credentials!" });
+  }
+
+  const payload = { id: user._id, username: user.username, email: email };
+  const token = jwt.sign(payload, process.env.KEY, { expiresIn: "2h" });
+
+  user.token = token;
+  user.password = undefined;
+
+  const options = {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  };
+
+  return res.status(200).cookie("token", token, options).json({
+    success: true,
+    message: "Login successful.",
+    username: user.username,
+    token,
+  });
+});
+
+// Logout Route
+export const logout = asyncWrapper(async (req, res) => {
+  res
+    .status(200)
+    .cookie("token", "", { expires: new Date(0) })
+    .json({ success: true, message: "Logout successful." });
+});
+
+// Check Auth Route
+export const checkAuth = asyncWrapper(async (req, res) => {
+  const token = req.cookies.token; // Get the token from cookies
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, message: "No token provided" });
+  }
+
+  jwt.verify(token, process.env.KEY, (err, payload) => {
+    if (err) {
+      // console.log("Error during token verification: ", err);
+      return res
+        .status(401)
+        .json({ success: false, message: "Token verification failed" });
+    } else {
+      // console.log("Token verified successfully");
+      req.userID = payload.id;
+      req.username = payload.username;
+      req.email = payload.email;
+
+      return res.status(200).json({
+        success: true,
+        message: "You are authenticated!",
+        userID: req.userID,
+        username: req.username,
+        email: req.email,
+      });
+    }
+  });
+});
+
+export const checkUsernameExists = asyncWrapper(async (req, res) => {
+  const { username } = req.params;
+  const user = await User.findOne({ username });
+
+  if (user) {
+    return res.status(200).json({ exists: true });
+  } else {
+    return res.status(404).json({ exists: false });
+  }
+});
 
 // router.post("/forgot-password", async (req, res) => {
 //   try {
