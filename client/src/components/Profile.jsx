@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Navbar from "./Navbar.jsx";
@@ -36,7 +35,7 @@ const Home = () => {
     return <NotFound />;
   }
   return (
-    <div className="container min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100">
       <Navbar />
       <ProblemsList />
     </div>

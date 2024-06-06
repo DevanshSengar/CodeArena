@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import { userRouter } from "./routes/userRoutes.js";
 import { problemRouter } from "./routes/problemRoutes.js";
 import { testcaseRouter } from "./routes/testcaseRoutes.js";
+import { submissionRouter } from "./routes/submissionRoutes.js";
 
 DBconnection();
 
@@ -25,7 +26,7 @@ app.use(cookieParser());
 app.use("/auth", userRouter);
 app.use("/api/problems", problemRouter);
 app.use("/api/testcases", testcaseRouter);
-// app.use("/submission", submissionRouter);
+app.use("/api/submissions", submissionRouter);
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;

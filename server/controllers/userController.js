@@ -1,14 +1,10 @@
-import User from "../models/user.js";
-import bcrypt from "bcrypt";
+import { User } from "../models/user.js";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import asyncWrapper from "../utils/asyncWrapper.js";
-// import nodemailer from "nodemailer";
-
-dotenv.config();
+import asyncWrapper from "../middlewares/asyncWrapper.js";
 
 // Signup Route
-export const signup = asyncWrapper(async (req, res) => {
+const signup = asyncWrapper(async (req, res) => {
   const { username, email, password } = req.body;
   if (!username || !email || !password) {
     return res
@@ -29,12 +25,16 @@ export const signup = asyncWrapper(async (req, res) => {
   await newUser.save();
 
   return res
-    .status(200)
-    .json({ success: true, message: "User registered successfully.", newUser });
+    .status(201)
+    .json({
+      success: true,
+      message: "User registered successfully.",
+      user: newUser,
+    });
 });
 
 // Login Route
-export const login = asyncWrapper(async (req, res) => {
+const login = asyncWrapper(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res
@@ -59,24 +59,24 @@ export const login = asyncWrapper(async (req, res) => {
   const payload = { id: user._id, username: user.username, email: email };
   const token = jwt.sign(payload, process.env.KEY, { expiresIn: "2h" });
 
-  user.token = token;
-  user.password = undefined;
-
   const options = {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
   };
 
-  return res.status(200).cookie("token", token, options).json({
-    success: true,
-    message: "Login successful.",
-    username: user.username,
-    token,
-  });
+  return res
+    .status(200)
+    .cookie("token", token, options)
+    .json({
+      success: true,
+      message: "Login successful.",
+      user: { username: user.username, email: user.email },
+      token,
+    });
 });
 
 // Logout Route
-export const logout = asyncWrapper(async (req, res) => {
+const logout = asyncWrapper(async (req, res) => {
   res
     .status(200)
     .cookie("token", "", { expires: new Date(0) })
@@ -84,7 +84,7 @@ export const logout = asyncWrapper(async (req, res) => {
 });
 
 // Check Auth Route
-export const checkAuth = asyncWrapper(async (req, res) => {
+const checkAuth = asyncWrapper(async (req, res) => {
   const token = req.cookies.token; // Get the token from cookies
 
   if (!token) {
@@ -108,24 +108,34 @@ export const checkAuth = asyncWrapper(async (req, res) => {
       return res.status(200).json({
         success: true,
         message: "You are authenticated!",
-        userID: req.userID,
-        username: req.username,
-        email: req.email,
+        user: {
+          userID: req.userID,
+          username: req.username,
+          email: req.email,
+        },
       });
     }
   });
 });
 
-export const checkUsernameExists = asyncWrapper(async (req, res) => {
+const checkUsernameExists = asyncWrapper(async (req, res) => {
   const { username } = req.params;
   const user = await User.findOne({ username });
 
   if (user) {
-    return res.status(200).json({ exists: true });
+    return res.status(200).json({ success: true, exists: true });
   } else {
-    return res.status(404).json({ exists: false });
+    return res.status(404).json({ success: false, exists: false });
   }
 });
+
+export default {
+  signup,
+  login,
+  logout,
+  checkAuth,
+  checkUsernameExists,
+};
 
 // router.post("/forgot-password", async (req, res) => {
 //   try {

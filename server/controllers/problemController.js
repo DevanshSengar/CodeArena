@@ -1,18 +1,27 @@
-import Problem from "../models/problem.js";
-import asyncWrapper from "../utils/asyncWrapper.js";
+import { Problem } from "../models/problem.js";
+import asyncWrapper from "../middlewares/asyncWrapper.js";
 
-// Controller methods for handling problem-related operations
 const getAllProblems = async (req, res) => {
   const problems = await Problem.find();
-  return res.json(problems);
+  return res
+    .status(200)
+    .json({
+      success: true,
+      message: "Problems fetched successfully",
+      problems,
+    });
 };
 
 const getProblemById = async (req, res) => {
   const problem = await Problem.findById(req.params.id);
   if (!problem) {
-    return res.status(404).json({ message: "Problem not found" });
+    return res
+      .status(404)
+      .json({ success: false, message: "Problem not found" });
   }
-  return res.json(problem);
+  return res
+    .status(200)
+    .json({ success: true, message: "Problem fetched successfully", problem });
 };
 
 const createProblem = async (req, res) => {
@@ -25,7 +34,13 @@ const createProblem = async (req, res) => {
   });
 
   const newProblem = await problem.save();
-  return res.status(201).json(newProblem);
+  return res
+    .status(201)
+    .json({
+      success: true,
+      message: "Problem created successfully",
+      problem: newProblem,
+    });
 };
 
 const updateProblem = async (req, res) => {
@@ -35,17 +50,29 @@ const updateProblem = async (req, res) => {
     { new: true }
   );
   if (!updatedProblem) {
-    return res.status(404).json({ message: "Problem not found" });
+    return res
+      .status(404)
+      .json({ success: false, message: "Problem not found" });
   }
-  return res.json(updatedProblem);
+  return res
+    .status(200)
+    .json({
+      success: true,
+      message: "Problem updated successfully",
+      problem: updatedProblem,
+    });
 };
 
 const deleteProblem = async (req, res) => {
   const deletedProblem = await Problem.findByIdAndDelete(req.params.id);
   if (!deletedProblem) {
-    return res.status(404).json({ message: "Problem not found" });
+    return res
+      .status(404)
+      .json({ success: false, message: "Problem not found" });
   }
-  return res.json({ message: "Problem deleted successfully" });
+  return res
+    .status(200)
+    .json({ success: true, message: "Problem deleted successfully" });
 };
 
 export default {

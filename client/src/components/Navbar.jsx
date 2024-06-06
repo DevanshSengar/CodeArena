@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-// src/components/Navbar.js
-import React from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png"; // Adjust the path as per your file structure
@@ -26,12 +23,12 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <img src={logo} alt="CodeArena Logo" className="h-12 pl-2" />
-          <Link
-            to="/"
+          {/* <Link
+            to={`/${username}/problems`}
             className="text-gray-600 hover:text-gray-900 hover:bg-gray-200 px-3 py-2 rounded-lg"
           >
             Problems
-          </Link>
+          </Link> */}
           <Link
             to="/submissions"
             className="text-gray-600 hover:text-gray-900 hover:bg-gray-200 px-3 py-2 rounded-lg"

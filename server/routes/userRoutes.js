@@ -1,18 +1,12 @@
-import {
-  signup,
-  login,
-  logout,
-  checkAuth,
-  checkUsernameExists,
-} from "../controllers/userController.js";
+import userController from "../controllers/userController.js";
 import express from "express";
 
 const router = express.Router();
 
-router.post("/signup", signup);
-router.post("/login", login);
-router.post("/logout", logout);
-router.get("/check-auth", checkAuth);
-router.get("/check-username/:username", checkUsernameExists);
+router.post("/signup", userController.signup);
+router.post("/login", userController.login);
+router.post("/logout", userController.logout);
+router.get("/check-auth", userController.checkAuth);
+router.get("/check-username/:username", userController.checkUsernameExists);
 
 export { router as userRouter };

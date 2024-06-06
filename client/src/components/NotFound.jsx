@@ -1,4 +1,3 @@
-// NotFound.js
 const NotFound = () => {
   return (
     <div>
